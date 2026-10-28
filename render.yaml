@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: f2m-autohub
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --threads 4
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true # Render generates a random secret at deploy
+      # To keep records.db across deploys you need a paid plan with a
+      # persistent disk: uncomment the disks block below AND this env var.
+      # - key: DATABASE_PATH
+      #   value: /data/records.db
+    # disks:                # requires a paid compute plan (Starter or above)
+    #   - name: f2m-data
+    #     mountPath: /data
+    #     sizeGB: 1
